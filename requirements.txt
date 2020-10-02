@@ -1,0 +1,6 @@
+uvicorn
+python
+fastapi
+psycopg2.extras
+psycopg2
+fastapi.responses
