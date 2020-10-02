@@ -1,6 +1,2 @@
-uvicorn
-python
-fastapi
-psycopg2.extras
-psycopg2
-fastapi.responses
+uvicorn==0.12.0
+python==3.8.2
