@@ -100,7 +100,7 @@ def get_count_films_by_month():
     return JSONResponse(content=list_films_month, headers=headers)
 
 @app.get('/api/v2/films/genres') #nombre de films par annnée
-def get_count_films_by_genre(): #TODO add 'Access-Control-Allow-Origin'?
+def get_count_films_by_genre():
     cursor = conn.cursor()
     cursor.execute(ss.count_films_by_genre)
     films_genre = cursor.fetchall()
@@ -109,6 +109,28 @@ def get_count_films_by_genre(): #TODO add 'Access-Control-Allow-Origin'?
         list_films_genre.append({'genre': film[0], 'number_of_films': film[1]})
     headers = {'Access-Control-Allow-Origin':"*"}
     return JSONResponse(content=list_films_genre, headers=headers)
+
+@app.get('/api/v2/gooddirectors/notes') #top 10 réalisateurs ayant au moins 5 films à leur actif, ordonnés par note la moyenne du public.
+def get_good_directors_notes_by_people():
+    cursor = conn.cursor()
+    cursor.execute(ss.get_gooddirectors_notes_by_people)
+    directors_notes = cursor.fetchall()
+    list_directors_notes = []
+    for director in directors_notes:
+        list_directors_notes.append({'total_films': director[0], 'Director': director[1], 'average_note_people': director[2], 'median_note_people': director[3], 'mode_note_people': director[4]})
+    headers = {'Access-Control-Allow-Origin':"*"}
+    return JSONResponse(content=list_directors_notes, headers=headers)
+
+@app.get('/api/v2/bigdirectors/notes') #top 10 des réalisateurs les plus prolifiques, la note moyenne, médiane et modale du public.
+def get_big_directors_notes_by_people():
+    cursor = conn.cursor()
+    cursor.execute(ss.get_bigdirectors_notes_by_people)
+    directors_notes = cursor.fetchall()
+    list_directors_notes = []
+    for director in directors_notes:
+        list_directors_notes.append({'total_films': director[0], 'Director': director[1], 'average_note_people': director[2], 'median_note_people': director[3], 'mode_note_people': director[4]})
+    headers = {'Access-Control-Allow-Origin':"*"}
+    return JSONResponse(content=list_directors_notes, headers=headers)
 
 if __name__ == "__main__":
   uvicorn.run(app, host="localhost", port=8000)

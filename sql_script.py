@@ -122,3 +122,33 @@ JOIN films_genres fg on fg.id_film = f.id
 JOIN genres g on g.id = fg.id_genre
 GROUP BY g.name;
 '''
+
+get_gooddirectors_notes_by_people = '''
+SELECT 
+count(fd.id_film) as nb_films, pe.full_name as Director,
+TRUNC(AVG(f.note_people)*100)::integer as average_note_people,
+TRUNC(percentile_disc(0.5) within group (order by f.note_people asc)*100)::integer as median_note_people,
+TRUNC(mode() WITHIN GROUP (ORDER BY f.note_people asc)*100)::integer as mode_note_people
+FROM films f
+JOIN films_directors fd ON fd.id_film = f.id
+JOIN people pe ON fd.id_director = pe.id
+WHERE f is not null
+GROUP BY Director
+HAVING count(fd.id_film) > 5
+ORDER by average_note_people desc
+LIMIT 10;
+'''
+
+get_bigdirectors_notes_by_people = '''
+SELECT 
+count(fd.id_film) as nb_films, pe.full_name as Director,
+TRUNC(AVG(f.note_people)*100)::integer as average_note_people,
+TRUNC(percentile_disc(0.5) within group (order by f.note_people asc)*100)::integer as median_note_people,
+TRUNC(mode() WITHIN GROUP (ORDER BY f.note_people asc)*100)::integer as mode_note_people
+FROM films f
+JOIN films_directors fd ON fd.id_film = f.id
+JOIN people pe ON fd.id_director = pe.id
+GROUP BY Director
+ORDER by nb_films desc
+LIMIT 10;
+'''
